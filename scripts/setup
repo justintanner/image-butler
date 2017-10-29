@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Exit on the first error and echo commands
+set -ex
+
+# Import env vars fro .env
+export $(egrep -v '^#' .env | xargs)
+
+# Compile project to es2015
+npm run transpile
+
+# Deploy to AWS Lambda
+claudia create --profile default --region $AWS_REGION --handler build/index.handler --no-optional-dependencies --timeout $LAMBDA_TIMEOUT --memory $LAMBDA_MEMORY --set-env BUCKET=$BUCKET,SECRET=$SECRET
+
+# Setup S3 hooks
+claudia add-s3-event-source --profile default --bucket $BUCKET --events s3:ObjectCreated:* --prefix uploads/ --suffix .jpg
+claudia add-s3-event-source --profile default --bucket $BUCKET --events s3:ObjectCreated:* --prefix uploads/ --suffix .jpeg
+claudia add-s3-event-source --profile default --bucket $BUCKET --events s3:ObjectCreated:* --prefix uploads/ --suffix .png
+claudia add-s3-event-source --profile default --bucket $BUCKET --events s3:ObjectCreated:* --prefix uploads/ --suffix .gif

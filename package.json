@@ -1,0 +1,68 @@
+{
+  "name": "image-butler"
+  "version": "1.0.0",
+  "description": "",
+  "engine": {
+    "node": "6.10.2"
+  },
+  "files": [
+    "build",
+    "graphicsmagick"
+  ],
+  "scripts": {
+    "prettier": "prettier --write '{test,src}/**/*.js'",
+    "pretest": "npm run prettier",
+    "precommit": "lint-staged",
+    "transpile": "babel src --out-dir build",
+    "test": "ava",
+    "setup": "./scripts/setup",
+    "update": "./scripts/update",
+    "destroy": "claudia destroy --profile default"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/justintanner/s3-image.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/justintanner/s3-image#readme",
+  "devDependencies": {
+    "app-root-path": "^2.0.1",
+    "ava": "^0.22.0",
+    "babel-eslint": "^7.2.3",
+    "claudia": "^2.14.1",
+    "dotenv": "^4.0.0",
+    "eslint": "^4.1.1",
+    "eslint-plugin-prettier": "^2.1.2",
+    "lambda-tester": "^3.0.2",
+    "prettier": "^1.5.3",
+    "sinon": "^2.3.8"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.82.0",
+    "babel-cli": "^6.24.1",
+    "babel-polyfill": "^6.23.0",
+    "babel-preset-latest": "^6.24.1",
+    "babel-register": "^6.24.1",
+    "crypto": "^1.0.1",
+    "gm": "^1.23.0",
+    "request": "^2.81.0",
+    "underscore": "^1.8.3"
+  },
+  "ava": {
+    "files": [
+      "test/*.js"
+    ],
+    "source": [
+      "src/**/*.{js}"
+    ],
+    "concurrency": 5,
+    "failFast": false,
+    "tap": false,
+    "powerAssert": false,
+    "require": [
+      "babel-register"
+    ],
+    "babel": "inherit"
+  }
+}

@@ -1,0 +1,3 @@
+{
+  "envFile": "./test/fixtures/.env.lambda-tester"
+}

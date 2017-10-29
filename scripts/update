@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Exit on the first error and echo commands
+set -ex
+
+# Import env vars fro .env
+export $(egrep -v '^#' .env | xargs)
+
+# Compile project to es2015
+npm run transpile
+
+claudia update --profile default --no-optional-dependencies --handler build/index.handler --set-env BUCKET=$BUCKET,SECRET=$SECRET
