@@ -1,5 +1,5 @@
 {
-  "name": "image-butler"
+  "name": "image-butler",
   "version": "1.0.0",
   "description": "",
   "engine": {
@@ -21,11 +21,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@bitbucket.org/justintanner/s3-image.git"
+    "url": "git@github.com:justintanner/image-butler.git"
   },
   "author": "",
-  "license": "ISC",
-  "homepage": "https://bitbucket.org/justintanner/s3-image#readme",
+  "license": "MIT",
+  "homepage": "https://github.com/justintanner/image-butler",
   "devDependencies": {
     "app-root-path": "^2.0.1",
     "ava": "^0.22.0",
