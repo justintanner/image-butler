@@ -1,7 +1,7 @@
 {
   "name": "image-butler",
   "version": "0.0.9",
-  "description": "",
+  "description": "Resize, crop and rotate images using AWS Lambda and S3.",
   "engine": {
     "node": "6.10.2"
   },

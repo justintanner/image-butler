@@ -1,10 +1,13 @@
 import _ from "underscore";
 import crypto from "crypto";
 
-/**
- * Decodes S3 paths with encoded config data.
- */
 class PathDecoder {
+  /**
+   * Decodes S3 paths with encoded config data.
+   *
+   * @param path AWS S3 path of an uploaded image
+   *
+   */
   constructor(path) {
     this._path = decodeURIComponent(path);
 

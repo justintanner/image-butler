@@ -1,29 +1,56 @@
 # image-butler 
 
-Process images using AWS Lambda freeing your server from running slow, memory intensive image manipulation commands.  
+Resize, crop and rotate images using AWS Lambda and S3.
 
-Creates thumbnails, crops and rotates all within an S3 bucket.
+### How it works
+ 
+ 1) User uploads an image directly to S3 with encoded configuration data
+ 2) `image-butler` resizes multiple thumbnails, crops or rotates the image
+ 3) `image-butler` posts back to your server with the newly processed image(s) 
+ 
+### Requirements
+
+* Node 6.10.2 (same version as AWS Lambda)
+* Amazon Web Services
 
 ### Installation
 
 ```
 git clone git@github.com:justintanner/image-butler.git
-
 yarn 
 ```
 
 ### Configuration
 
-Modify the file `.env` or set the following environment variables:
+Generate the config file with the command
+```
+npm run config 
+```
+
+Create an S3 bucket to temporarily store user uploads.
+
+Edit the newly created `.env` file adding the region and name of your new s3 bucket, for example: 
 
 ```
 IB_REGION=us-west-1
-IB_BUCKET=my_s3_bucket
+IB_BUCKET=my-temporary-upload-bucket
 ```
+
+### Deploying to AWS Lambda
+
+Once the settings in `.env` match your environment
+
+```
+npm run create
+```
+
+### Uploading with the Client ###
+
+*Coming Soon*
 
 ### Protocol
 
-** TODO: Add a description of the URL protocol **
+*Coming Soon*
 
 ### Special Thanks
 

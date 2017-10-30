@@ -1,10 +1,20 @@
 import GmLoader from "./GmLoader";
 const gm = GmLoader(module);
 
-/**
- * Creates a single style (resized thumbnail) and saves the result to s3.
- */
 class CreateStyle {
+  /**
+   * Creates a single style (resized thumbnail) and saves the result to s3.
+   *
+   * @param options Options for resizing and saving image
+   * @param options.image Original image data
+   * @param options.style Name of Image style
+   * @param options.geometry String representing the geometry of the image (eg 300x400)
+   * @param options.destPath Destination path on s3 to save the image
+   * @param options.fileExtension File extension of the image (used to determine what type of image to save)
+   * @param options.s3 Already initialized s3 instance
+
+   * @return A promise that resolves when the image has been saved to s3
+   */
   static from(options) {
     return CreateStyle.resize(options)
       .then(CreateStyle.size)

@@ -6,16 +6,13 @@ const gm = GmLoader(module);
 import PathDecoder from "./PathDecoder";
 import CreateStyle from "./CreateStyle";
 
-/**
- * Processes an image uploaded to AWS S3.
- */
 class ProcessUpload {
   /**
-   * Takes an AWS S3 path (aka key) and processes it according to the config encoded in the path.
+   * Processes an image uploaded to S3.
    *
-   * @param {String} s3Path - aws s3 path of an uploaded image
-   * @param {Object} s3 - already initialized s3 object
-   * @return {Promise} a promise that resolves when the image has been fully processed
+   * @param s3Path AWS S3 of an uploaded image
+   * @param s3 Already initialized s3 object
+   * @return A promise that resolves when the image has been fully processed
    *
    */
   static fromPath(s3Path, s3) {

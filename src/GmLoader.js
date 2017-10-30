@@ -5,6 +5,7 @@ function GmLoader(module) {
       appPath: process.env["LAMBDA_TASK_ROOT"] + "/graphicsmagick/bin/"
     });
   } else {
+    // Use the local gm for tests
     return module.require("gm");
   }
 }
