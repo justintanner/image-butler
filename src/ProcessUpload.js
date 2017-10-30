@@ -46,7 +46,7 @@ class ProcessUpload {
   static fetchOriginal(chain) {
     return new Promise((resolve, reject) => {
       const params = {
-        Bucket: process.env.BUCKET,
+        Bucket: process.env.IB_BUCKET,
         Key: chain.pathDecoder.path
       };
 
@@ -139,7 +139,7 @@ class ProcessUpload {
   static copyOriginal(chain) {
     return new Promise((resolve, reject) => {
       const params = {
-        Bucket: process.env.BUCKET,
+        Bucket: process.env.IB_BUCKET,
         Key: chain.pathDecoder.finishedPathForStyle("original"),
         Body: chain.image
       };

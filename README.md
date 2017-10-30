@@ -1,6 +1,8 @@
 # image-butler 
 
-Process images using AWS Lambda instead of on the back-end. Creates thumbnails, crops and rotates within an AWS S3 bucket.
+Process images using AWS Lambda freeing your server from running slow, memory intensive image manipulation commands.  
+
+Creates thumbnails, crops and rotates all within an S3 bucket.
 
 ### Installation
 
@@ -15,7 +17,8 @@ yarn
 Modify the file `.env` or set the following environment variables:
 
 ```
-IMAGE_BUTLER_BUCKET=my_s3_bucket
+IB_REGION=us-west-1
+IB_BUCKET=my_s3_bucket
 ```
 
 ### Protocol

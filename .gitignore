@@ -5,3 +5,4 @@ npm-debug.log
 .idea*
 claudia.config
 claudia.json
+.env

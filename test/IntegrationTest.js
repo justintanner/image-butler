@@ -44,9 +44,11 @@ test("successfully resizes an image", t => {
     s3Spy
   );
 
-  return LambdaTester(handler).event(validEvent).expectSucceed(result => {
-    t.is(result, "Successfully processed image. Created 2 styles.");
-  });
+  return LambdaTester(handler)
+    .event(validEvent)
+    .expectSucceed(result => {
+      t.is(result, "Successfully processed image. Created 2 styles.");
+    });
 });
 
 test("missing callback url", t => {
@@ -60,23 +62,29 @@ test("missing callback url", t => {
 
   const record = Utils.lambdaRecord(`uploads/1/2/${payload}/t.jpg`, s3Spy);
 
-  return LambdaTester(handler).event(record).expectError(error => {
-    t.is(error.message, "Missing callbackUrl.");
-  });
+  return LambdaTester(handler)
+    .event(record)
+    .expectError(error => {
+      t.is(error.message, "Missing callbackUrl.");
+    });
 });
 
 test("fails with a bad s3 path", t => {
   const recordWithBadPath = Utils.lambdaRecord("bad s3 path", s3Spy);
 
-  return LambdaTester(handler).event(recordWithBadPath).expectError(error => {
-    t.is(error.message, "Invalid S3 path");
-  });
+  return LambdaTester(handler)
+    .event(recordWithBadPath)
+    .expectError(error => {
+      t.is(error.message, "Invalid S3 path");
+    });
 });
 
 test("fails with a bogus event", t => {
   const bogusEvent = { bogus: "event" };
 
-  return LambdaTester(handler).event(bogusEvent).expectError(error => {
-    t.is(error.message, "Invalid AWS Lambda Event");
-  });
+  return LambdaTester(handler)
+    .event(bogusEvent)
+    .expectError(error => {
+      t.is(error.message, "Invalid AWS Lambda Event");
+    });
 });
