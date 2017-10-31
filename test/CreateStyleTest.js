@@ -13,17 +13,13 @@ let s3, awsMocks;
 test.beforeEach(t => {
   s3 = new aws.S3({ apiVersion: "2006-03-01" });
   awsMocks = new AwsMocks(s3);
+  awsMocks.putObject(null, {});
 });
 
 test("successfully creates a style from a jpg", t => {
-  // ignore calls to AWS
-  awsMocks.putObject(null, {});
-
-  const image = TestHelpers.fixture("960x720.jpg");
-
   return CreateStyle.from({
-    image: image,
-    size: "thumb",
+    image: TestHelpers.fixture("960x720.jpg"),
+    style: "thumb",
     geometry: "100x100",
     maxGeometry: "1000x1000",
     destPath: "fake/s3/path/t.jpg",
@@ -36,14 +32,9 @@ test("successfully creates a style from a jpg", t => {
 });
 
 test("successfully creates a style from a png", t => {
-  // ignore calls to AWS
-  awsMocks.putObject(null, {});
-
-  const image = TestHelpers.fixture("legends_of_animals.png");
-
   return CreateStyle.from({
-    image: image,
-    size: "thumb",
+    image: TestHelpers.fixture("legends_of_animals.png"),
+    style: "thumb",
     geometry: "200x200",
     destPath: "fake/s3/path/t.png",
     fileExtension: "png",
@@ -55,14 +46,9 @@ test("successfully creates a style from a png", t => {
 });
 
 test("successfully creates a style from a gif", t => {
-  // ignore calls to AWS
-  awsMocks.putObject(null, {});
-
-  const image = TestHelpers.fixture("tugnet.gif");
-
   return CreateStyle.from({
-    image: image,
-    size: "thumb",
+    image: TestHelpers.fixture("tugnet.gif"),
+    style: "thumb",
     geometry: "300x300",
     destPath: "fake/s3/path/t.gif",
     fileExtension: "gif",
@@ -70,5 +56,37 @@ test("successfully creates a style from a gif", t => {
   }).then(result => {
     t.is(result.size.height, 191);
     t.is(result.size.width, 300);
+  });
+});
+
+test("fails when given invalid image data", t => {
+  return CreateStyle.from({
+    image: TestHelpers.fixture("empty-file.jpg"),
+    style: "thumb",
+    geometry: "300x300",
+    destPath: "fake/s3/path/t.gif",
+    fileExtension: "gif",
+    s3: s3
+  }).catch(error => {
+    t.is(
+      error.message,
+      "Failed to resize style thumb: Stream yields empty buffer"
+    );
+  });
+});
+
+test("fails to save to s3", t => {
+  awsMocks.restore();
+  awsMocks.putObject(new Error("Mocking an error"), {});
+
+  return CreateStyle.from({
+    image: TestHelpers.fixture("960x720.jpg"),
+    style: "thumb",
+    geometry: "300x300",
+    destPath: "fake/s3/path/t.gif",
+    fileExtension: "gif",
+    s3: s3
+  }).catch(error => {
+    t.is(error.message, "Failed save style thumb: Mocking an error");
   });
 });
