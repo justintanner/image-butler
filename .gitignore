@@ -1,4 +1,4 @@
-node_modules/*
+node_modules
 build/*
 npm-debug.log
 *.sw?
@@ -6,4 +6,6 @@ npm-debug.log
 claudia.config
 claudia.json
 .env
+.nyc_output
+coverage
 .nyc_output
