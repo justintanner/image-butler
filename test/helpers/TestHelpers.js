@@ -4,13 +4,13 @@ import crypto from "crypto";
 import _ from "underscore";
 
 import dotenv from "dotenv";
-dotenv.config();
+dotenv.config({ path: fixturePath(".env.lambda-tester") });
 
 function signAndEncode(jsonObject, signatureOverride) {
   let json = JSON.stringify(jsonObject);
 
   if (_.isUndefined(signatureOverride)) {
-    const hmac = crypto.createHmac("sha256", process.env.SECRET);
+    const hmac = crypto.createHmac("sha256", process.env.IB_SECRET);
 
     jsonObject.signature = hmac.update(json).digest("hex");
   } else {
@@ -25,7 +25,11 @@ function signAndEncode(jsonObject, signatureOverride) {
 }
 
 function fixture(filename) {
-  return fs.readFileSync(appRoot + "/test/fixtures/" + filename);
+  return fs.readFileSync(fixturePath(filename));
+}
+
+function fixturePath(filename) {
+  return appRoot + "/test/fixtures/" + filename;
 }
 
 function lambdaRecord(path, s3Spy) {
@@ -35,4 +39,4 @@ function lambdaRecord(path, s3Spy) {
   };
 }
 
-export { signAndEncode, fixture, lambdaRecord };
+export { signAndEncode, fixture, fixturePath, lambdaRecord };

@@ -1,6 +1,6 @@
 import test from "ava";
 import ProcessUpload from "../src/ProcessUpload.js";
-import * as Utils from "./helpers/Utils.js";
+import * as TestHelpers from "./helpers/TestHelpers.js";
 import AwsMocks from "./helpers/AwsMocks.js";
 import sinon from "sinon";
 import aws from "aws-sdk";
@@ -8,12 +8,12 @@ import request from "request";
 
 // Loads ENV vars from .env for testing only. On AWS Lambda ENV vars are set by claudia.js
 import dotenv from "dotenv";
-dotenv.config();
+dotenv.config({ path: TestHelpers.fixturePath(".env.lambda-tester") });
 
 let encodedStyles, validPath, s3Spy, awsMocks;
 
 test.before(t => {
-  encodedStyles = Utils.signAndEncode({
+  encodedStyles = TestHelpers.signAndEncode({
     styles: {
       thumb: "100x100",
       large: "500x700"
@@ -35,7 +35,7 @@ test.beforeEach(t => {
 
 test("processes a valid jpg", t => {
   awsMocks.getObject(null, {
-    Body: Utils.fixture("960x720.jpg"),
+    Body: TestHelpers.fixture("960x720.jpg"),
     ContentLength: 999,
     ContentType: "image/jpeg"
   });
@@ -55,7 +55,7 @@ test("processes a valid jpg", t => {
 
 test("processes a massive ~10MB jpg", t => {
   awsMocks.getObject(null, {
-    Body: Utils.fixture("5472x3648.jpg"),
+    Body: TestHelpers.fixture("5472x3648.jpg"),
     ContentLength: 999
   });
 
@@ -71,13 +71,13 @@ test("processes a massive ~10MB jpg", t => {
 
 test("pre rotates before processing an image", t => {
   awsMocks.getObject(null, {
-    Body: Utils.fixture("960x720.jpg"),
+    Body: TestHelpers.fixture("960x720.jpg"),
     ContentLength: 999
   });
 
   awsMocks.putObject(null, {});
 
-  const rotationStyles = Utils.signAndEncode({
+  const rotationStyles = TestHelpers.signAndEncode({
     rotateOriginal: {
       angle: 90
     },
@@ -100,13 +100,13 @@ test("pre rotates before processing an image", t => {
 
 test("pre crops before processing an image", t => {
   awsMocks.getObject(null, {
-    Body: Utils.fixture("960x720.jpg"),
+    Body: TestHelpers.fixture("960x720.jpg"),
     ContentLength: 999
   });
 
   awsMocks.putObject(null, {});
 
-  const cropStyles = Utils.signAndEncode({
+  const cropStyles = TestHelpers.signAndEncode({
     cropOriginal: {
       width: 200,
       height: 200,
@@ -148,7 +148,7 @@ test("fails with an invalid s3 image", async t => {
 
 /*test("fails to identify empty image", async t => {
   awsMocks.getObject(null, {
-    Body: Utils.fixture("empty-file.jpg"),
+    Body: TestHelpers.fixture("empty-file.jpg"),
     ContentLength: 999
   });
 

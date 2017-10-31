@@ -1,6 +1,6 @@
 import test from "ava";
 import ProcessUploadAndCallback from "../src/ProcessUploadAndCallback.js";
-import * as Utils from "./helpers/Utils.js";
+import * as TestHelpers from "./helpers/TestHelpers.js";
 import AwsMocks from "./helpers/AwsMocks.js";
 import sinon from "sinon";
 import aws from "aws-sdk";
@@ -8,7 +8,7 @@ import request from "request";
 
 // Loads ENV vars from .env for testing only. On AWS Lambda ENV vars are set by claudia.js
 import dotenv from "dotenv";
-dotenv.config();
+dotenv.config({ path: TestHelpers.fixturePath(".env.lambda-tester") });
 
 let encodedPayload, validKey, s3Spy, awsMocks, requestSpy, requestSandbox;
 
@@ -18,7 +18,7 @@ test.before(t => {
   requestSandbox = sinon.sandbox.create();
   requestSpy = requestSandbox.spy(request, "post");
 
-  encodedPayload = Utils.signAndEncode({
+  encodedPayload = TestHelpers.signAndEncode({
     styles: {
       thumb: "100x100",
       large: "500x700"
@@ -38,7 +38,7 @@ test.beforeEach(t => {
 // Using .serial because the mocking needs to reset before each test.
 test.serial.failing("processes a valid jpg and calls back", t => {
   awsMocks.getObject(null, {
-    Body: Utils.fixture("960x720.jpg"),
+    Body: TestHelpers.fixture("960x720.jpg"),
     ContentLength: 592,
     ContentType: "image/jpeg"
   });

@@ -1,12 +1,12 @@
 import test from "ava";
-import * as Utils from "./helpers/Utils.js";
+import * as TestHelpers from "./helpers/TestHelpers.js";
 import aws from "aws-sdk";
 import AwsMocks from "./helpers/AwsMocks.js";
 import CreateStyle from "../src/CreateStyle.js";
 
 // Loads ENV vars from .env for testing only. On AWS Lambda ENV vars are set by claudia.js
 import dotenv from "dotenv";
-dotenv.config();
+dotenv.config({ path: TestHelpers.fixturePath(".env.lambda-tester") });
 
 let s3, awsMocks;
 
@@ -19,7 +19,7 @@ test("successfully creates a style from a jpg", t => {
   // ignore calls to AWS
   awsMocks.putObject(null, {});
 
-  const image = Utils.fixture("960x720.jpg");
+  const image = TestHelpers.fixture("960x720.jpg");
 
   return CreateStyle.from({
     image: image,
@@ -39,7 +39,7 @@ test("successfully creates a style from a png", t => {
   // ignore calls to AWS
   awsMocks.putObject(null, {});
 
-  const image = Utils.fixture("legends_of_animals.png");
+  const image = TestHelpers.fixture("legends_of_animals.png");
 
   return CreateStyle.from({
     image: image,
@@ -58,7 +58,7 @@ test("successfully creates a style from a gif", t => {
   // ignore calls to AWS
   awsMocks.putObject(null, {});
 
-  const image = Utils.fixture("tugnet.gif");
+  const image = TestHelpers.fixture("tugnet.gif");
 
   return CreateStyle.from({
     image: image,

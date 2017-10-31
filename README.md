@@ -1,4 +1,4 @@
-# image-butler 
+# image-butler [![Coverage Status](https://coveralls.io/repos/github/justintanner/image-butler/badge.svg?branch=master)](https://coveralls.io/github/justintanner/image-butler?branch=master)
 
 Resize, crop and rotate images using AWS Lambda and S3.
 

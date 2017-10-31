@@ -64,7 +64,7 @@ class PathDecoder {
 
     const json = JSON.stringify(configWithoutSignature);
 
-    const hmac = crypto.createHmac("sha256", process.env.SECRET);
+    const hmac = crypto.createHmac("sha256", process.env.IB_SECRET);
     const computedSignature = hmac.update(json).digest("hex");
 
     if (configSignature !== computedSignature) {

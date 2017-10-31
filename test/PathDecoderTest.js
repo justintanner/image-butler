@@ -1,11 +1,11 @@
 import test from "ava";
-import * as Utils from "./helpers/Utils.js";
+import * as TestHelpers from "./helpers/TestHelpers.js";
 import PathDecoder from "../src/PathDecoder.js";
 
 let encodedStyles;
 
 test.before(t => {
-  encodedStyles = Utils.signAndEncode({
+  encodedStyles = TestHelpers.signAndEncode({
     styles: {
       thumb: "150x150",
       large: "100x700"
@@ -33,7 +33,7 @@ test("creates a valid destination path", t => {
 });
 
 test("accepts a valid rotation angle", t => {
-  const rotateConfig = Utils.signAndEncode({
+  const rotateConfig = TestHelpers.signAndEncode({
     rotateOriginal: {
       backgroundColor: "blue",
       angle: 90
@@ -49,7 +49,7 @@ test("accepts a valid rotation angle", t => {
 });
 
 test("accepts a valid crop config", t => {
-  const cropConfig = Utils.signAndEncode({
+  const cropConfig = TestHelpers.signAndEncode({
     cropOriginal: {
       width: 201,
       height: 6,
@@ -99,7 +99,7 @@ test("throw an exception for an invalid path", async t => {
 });
 
 test("throws an exception for an invalid size", async t => {
-  const badSize = Utils.signAndEncode({
+  const badSize = TestHelpers.signAndEncode({
     styles: {
       thumb: "invalid"
     }
@@ -115,7 +115,7 @@ test("throws an exception for an invalid size", async t => {
 });
 
 test("throws an exception for an invalid signature", async t => {
-  const badSignature = Utils.signAndEncode(
+  const badSignature = TestHelpers.signAndEncode(
     {
       styles: {
         thumb: "150x150",
