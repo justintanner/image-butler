@@ -4,4 +4,4 @@ node_js:
 addons:
   apt:
     packages:
-    - libjpeg62
+    - graphicsmagick
