@@ -47,7 +47,7 @@
     "type": "git",
     "url": "git@github.com:justintanner/image-butler.git"
   },
-  "author": "",
+  "author": "Justin Tanner",
   "license": "MIT",
   "homepage": "https://github.com/justintanner/image-butler",
   "devDependencies": {
