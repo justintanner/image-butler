@@ -11,14 +11,18 @@
   ],
   "scripts": {
     "config": "babel-node ./scripts/config.js",
-    "create": "npm-run-all transpile create:lambda create:hooks:jpg create:hooks:jpeg create:hooks:png create:hooks:gif",
+    "create": "npm-run-all transpile create:lambda create:hooks:jpg create:hooks:jpg:capital create:hooks:jpeg create:hooks:jpeg:capital create:hooks:png create:hooks:png:capital create:hooks:gif create:hooks:gif:capital",
     "update": "npm-run-all transpile update:lambda",
     "destroy": "claudia destroy --profile default",
     "create:lambda": "better-npm-run create:lambda",
     "create:hooks:jpg": "better-npm-run create:hooks:jpg",
+    "create:hooks:jpg:capital": "better-npm-run create:hooks:jpg:capital",
     "create:hooks:jpeg": "better-npm-run create:hooks:jpeg",
+    "create:hooks:jpeg:capital": "better-npm-run create:hooks:jpeg:capital",
     "create:hooks:png": "better-npm-run create:hooks:png",
+    "create:hooks:png:capital": "better-npm-run create:hooks:png:capital",
     "create:hooks:gif": "better-npm-run create:hooks:gif",
+    "create:hooks:gif:capital": "better-npm-run create:hooks:gif:capital",
     "transpile": "babel src --out-dir build",
     "update:lambda": "claudia update --profile default --no-optional-dependencies --handler build/index.handler",
     "prettier": "prettier --write '{test,src}/**/*.js'",
@@ -33,14 +37,26 @@
     "create:hooks:jpg": {
       "command": "claudia add-s3-event-source --profile default --bucket $IB_BUCKET --events s3:ObjectCreated:* --prefix uploads/ --suffix .jpg"
     },
+    "create:hooks:jpg:capital": {
+      "command": "claudia add-s3-event-source --profile default --bucket $IB_BUCKET --events s3:ObjectCreated:* --prefix uploads/ --suffix .JPG"
+    },
     "create:hooks:jpeg": {
       "command": "claudia add-s3-event-source --profile default --bucket $IB_BUCKET --events s3:ObjectCreated:* --prefix uploads/ --suffix .jpeg"
+    },
+    "create:hooks:jpeg:capital": {
+      "command": "claudia add-s3-event-source --profile default --bucket $IB_BUCKET --events s3:ObjectCreated:* --prefix uploads/ --suffix .JPEG"
     },
     "create:hooks:png": {
       "command": "claudia add-s3-event-source --profile default --bucket $IB_BUCKET --events s3:ObjectCreated:* --prefix uploads/ --suffix .png"
     },
+    "create:hooks:png:capital": {
+      "command": "claudia add-s3-event-source --profile default --bucket $IB_BUCKET --events s3:ObjectCreated:* --prefix uploads/ --suffix .PNG"
+    },
     "create:hooks:gif": {
       "command": "claudia add-s3-event-source --profile default --bucket $IB_BUCKET --events s3:ObjectCreated:* --prefix uploads/ --suffix .gif"
+    },
+    "create:hooks:gif:capital": {
+      "command": "claudia add-s3-event-source --profile default --bucket $IB_BUCKET --events s3:ObjectCreated:* --prefix uploads/ --suffix .GIF"
     }
   },
   "repository": {

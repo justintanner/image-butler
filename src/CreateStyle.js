@@ -58,7 +58,7 @@ class CreateStyle {
   static save(chain) {
     return new Promise((resolve, reject) => {
       const params = {
-        Bucket: process.env.BUCKET,
+        Bucket: process.env.IB_BUCKET,
         Key: chain.destPath,
         Body: chain.resizedImage
       };
