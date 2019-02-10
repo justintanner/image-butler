@@ -2,7 +2,7 @@
 
 Resize, crop and rotate images using AWS Lambda and S3.
 
-[example image](https://imgur.com/a/pdgHFLG)
+![example image](https://imgur.com/a/pdgHFLG)
 
 ### How it works
  
