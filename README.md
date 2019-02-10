@@ -2,6 +2,8 @@
 
 Resize, crop and rotate images using AWS Lambda and S3.
 
+[example image](https://imgur.com/a/pdgHFLG)
+
 ### How it works
  
  1) User uploads an image directly to S3 with encoded configuration data
