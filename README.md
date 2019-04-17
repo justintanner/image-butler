@@ -46,14 +46,6 @@ Once the settings in `.env` match your environment
 npm run create
 ```
 
-### Uploading with the Client ###
-
-*Coming Soon*
-
-### Protocol
-
-*Coming Soon*
-
 ### Special Thanks
 
 Inspired by [aws-lambda-image][1]
