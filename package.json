@@ -87,8 +87,8 @@
     "@babel/core": "^7.4.5",
     "@babel/preset-env": "^7.4.5",
     "@babel/register": "^7.4.4",
-    "aws-sdk": "^2.82.0",
-    "gm": "^1.23.0",
+    "aws-sdk": "^2.480.0",
+    "gm": "^1.23.1",
     "request": "^2.88.0",
     "underscore": "^1.9.1"
   },
