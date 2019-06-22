@@ -1,4 +1,14 @@
 {
-  "plugins": ["babel-polyfill"],
-  "presets": ["latest"]
+    "presets": [
+        [
+            "@babel/preset-env",
+            {
+                "targets": {
+                    "node": "8.10"
+                }
+            }
+        ]
+    ]
 }
+
+

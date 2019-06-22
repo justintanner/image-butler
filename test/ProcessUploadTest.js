@@ -3,14 +3,13 @@ import ProcessUpload from "../src/ProcessUpload.js";
 import * as TestHelpers from "./helpers/TestHelpers.js";
 import AwsMocks from "./helpers/AwsMocks.js";
 import sinon from "sinon";
-import aws from "aws-sdk";
 import request from "request";
 
 // Loads ENV vars from .env for testing only. On AWS Lambda ENV vars are set by claudia.js
 import dotenv from "dotenv";
 dotenv.config({ path: TestHelpers.fixturePath(".env.lambda-tester") });
 
-let encodedStyles, validPath, s3Spy, awsMocks;
+let encodedStyles, validPath;
 
 test.before(t => {
   encodedStyles = TestHelpers.signAndEncode({
@@ -27,13 +26,9 @@ test.before(t => {
   sinon.stub(request, "post").yields(null, {}, {});
 });
 
-test.beforeEach(t => {
-  // Initializing before each test to reset all the aws mocks
-  s3Spy = new aws.S3({ apiVersion: "2006-03-01" });
-  awsMocks = new AwsMocks(s3Spy);
-});
-
 test("processes a valid jpg", t => {
+  let awsMocks = new AwsMocks();
+
   awsMocks.getObject(null, {
     Body: TestHelpers.fixture("960x720.jpg"),
     ContentLength: 999,
@@ -42,7 +37,7 @@ test("processes a valid jpg", t => {
 
   awsMocks.putObject(null, {});
 
-  return ProcessUpload.fromPath(validPath, s3Spy).then(results => {
+  return ProcessUpload.fromPath(validPath, awsMocks.s3).then(results => {
     t.is(
       results.finalMessage,
       "Successfully processed image. Created 2 styles."
@@ -54,6 +49,8 @@ test("processes a valid jpg", t => {
 });
 
 test("processes a massive ~10MB jpg", t => {
+  let awsMocks = new AwsMocks();
+
   awsMocks.getObject(null, {
     Body: TestHelpers.fixture("5472x3648.jpg"),
     ContentLength: 999
@@ -61,7 +58,7 @@ test("processes a massive ~10MB jpg", t => {
 
   awsMocks.putObject(null, {});
 
-  return ProcessUpload.fromPath(validPath, s3Spy).then(results => {
+  return ProcessUpload.fromPath(validPath, awsMocks.s3).then(results => {
     t.is(
       results.finalMessage,
       "Successfully processed image. Created 2 styles."
@@ -70,6 +67,8 @@ test("processes a massive ~10MB jpg", t => {
 });
 
 test("pre rotates before processing an image", t => {
+  let awsMocks = new AwsMocks();
+
   awsMocks.getObject(null, {
     Body: TestHelpers.fixture("960x720.jpg"),
     ContentLength: 999
@@ -89,7 +88,7 @@ test("pre rotates before processing an image", t => {
 
   const rotationPath = `uploads/1/2/${rotationStyles}/t.jpg`;
 
-  return ProcessUpload.fromPath(rotationPath, s3Spy).then(results => {
+  return ProcessUpload.fromPath(rotationPath, awsMocks.s3).then(results => {
     t.is(results.sizes.original.width, 720);
     t.is(results.sizes.original.height, 960);
 
@@ -99,6 +98,8 @@ test("pre rotates before processing an image", t => {
 });
 
 test("pre crops before processing an image", t => {
+  let awsMocks = new AwsMocks();
+
   awsMocks.getObject(null, {
     Body: TestHelpers.fixture("960x720.jpg"),
     ContentLength: 999
@@ -121,7 +122,7 @@ test("pre crops before processing an image", t => {
 
   const cropPath = `uploads/1/2/${cropStyles}/t.jpg`;
 
-  return ProcessUpload.fromPath(cropPath, s3Spy).then(results => {
+  return ProcessUpload.fromPath(cropPath, awsMocks.s3).then(results => {
     t.is(results.sizes.original.width, 200);
     t.is(results.sizes.original.height, 200);
 
@@ -130,29 +131,35 @@ test("pre crops before processing an image", t => {
   });
 });
 
-test("fails when s3 returns an error", async t => {
-  awsMocks.getObject(new Error("mockS3Error"), null);
+test("fails when s3 returns an error", t => {
+  let awsMocks = new AwsMocks();
 
-  const results = await t.throws(ProcessUpload.fromPath(validPath, s3Spy));
+  awsMocks.getObject(new Error("mockS3Error"), {});
 
-  t.regex(results.error.message, /Failed to fetch S3 Object*/);
+  return ProcessUpload.fromPath(validPath, awsMocks.s3).catch(results => {
+    t.regex(results.error.message, /Failed to fetch S3 Object*/);
+  });
 });
 
-test("fails with an invalid s3 image", async t => {
+test("fails with an invalid s3 image", t => {
+  let awsMocks = new AwsMocks();
+
   awsMocks.getObject(null, { ContentLength: 0 });
 
-  const results = await t.throws(ProcessUpload.fromPath(validPath, s3Spy));
-
-  t.is(results.error.message, "Image is empty");
+  return ProcessUpload.fromPath(validPath, awsMocks.s3).catch(results => {
+    t.is(results.error.message, "Image is empty");
+  });
 });
 
-/*test("fails to identify empty image", async t => {
+test("fails to identify empty image", async t => {
+  let awsMocks = new AwsMocks();
+
   awsMocks.getObject(null, {
     Body: TestHelpers.fixture("empty-file.jpg"),
     ContentLength: 999
   });
 
-  const results = await t.throws(ProcessUpload.fromPath(validPath, s3Spy));
-
-  t.regex(results.error.message, /Failed to size original:.*!/);
-});*/
+  return ProcessUpload.fromPath(validPath, awsMocks.s3).catch(results => {
+    t.regex(results.error.message, /Failed to size original:*/);
+  });
+});

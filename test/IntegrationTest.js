@@ -1,6 +1,5 @@
 import test from "ava";
 import LambdaTester from "lambda-tester";
-import aws from "aws-sdk";
 import request from "request";
 import * as TestHelpers from "./helpers/TestHelpers";
 import AwsMocks from "./helpers/AwsMocks";
@@ -8,20 +7,14 @@ import sinon from "sinon";
 
 const handler = require("../src/index.js").handler;
 
-let s3Spy, awsMocks;
-
 test.before(t => {
   // Stubbing all http posts as valid.
   // Posts are tested in ProcessUploadAndCallbackTest.js
   sinon.stub(request, "post").yields(null, {}, {});
 });
 
-test.beforeEach(t => {
-  s3Spy = new aws.S3({ apiVersion: "2006-03-01" });
-  awsMocks = new AwsMocks(s3Spy);
-});
-
 test("successfully resizes an image", t => {
+  let awsMocks = new AwsMocks();
   awsMocks.getObject(null, {
     Body: TestHelpers.fixture("960x720.jpg"),
     ContentLength: 999,
@@ -41,7 +34,7 @@ test("successfully resizes an image", t => {
 
   const validEvent = TestHelpers.lambdaRecord(
     `uploads/1/2/${encodedPayload}/t.jpg`,
-    s3Spy
+    awsMocks.s3
   );
 
   return LambdaTester(handler)
@@ -52,6 +45,7 @@ test("successfully resizes an image", t => {
 });
 
 test("missing callback url", t => {
+  let awsMocks = new AwsMocks();
   const payload = TestHelpers.signAndEncode({
     styles: {
       thumb: "100x100",
@@ -62,7 +56,7 @@ test("missing callback url", t => {
 
   const record = TestHelpers.lambdaRecord(
     `uploads/1/2/${payload}/t.jpg`,
-    s3Spy
+    awsMocks.s3
   );
 
   return LambdaTester(handler)
@@ -73,7 +67,11 @@ test("missing callback url", t => {
 });
 
 test("fails with a bad s3 path", t => {
-  const recordWithBadPath = TestHelpers.lambdaRecord("bad s3 path", s3Spy);
+  let awsMocks = new AwsMocks();
+  const recordWithBadPath = TestHelpers.lambdaRecord(
+    "bad s3 path",
+    awsMocks.s3
+  );
 
   return LambdaTester(handler)
     .event(recordWithBadPath)
