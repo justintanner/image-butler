@@ -66,6 +66,33 @@ test("processes a massive ~10MB jpg", t => {
   });
 });
 
+test("maintains a jpegs exif rotation as if the pixels were transposed", t => {
+  let awsMocks = new AwsMocks();
+  awsMocks.putObject(null, {});
+
+  awsMocks.getObject(null, {
+    Body: TestHelpers.fixture("exif_rotated_480x640.jpg"),
+    ContentLength: 999
+  });
+
+  const rotationStyles = TestHelpers.signAndEncode({
+    styles: {
+      thumb: "100x100"
+    },
+    callbackUrl: "http://lvh.me"
+  });
+
+  const rotationPath = `uploads/1/2/${rotationStyles}/t.jpg`;
+
+  return ProcessUpload.fromPath(rotationPath, awsMocks.s3).then(results => {
+    t.is(results.sizes.original.width, 480);
+    t.is(results.sizes.original.height, 640);
+
+    t.is(results.sizes.thumb.width, 75);
+    t.is(results.sizes.thumb.height, 100);
+  });
+});
+
 test("pre rotates before processing an image", t => {
   let awsMocks = new AwsMocks();
 
@@ -160,6 +187,6 @@ test("fails to identify empty image", async t => {
   });
 
   return ProcessUpload.fromPath(validPath, awsMocks.s3).catch(results => {
-    t.regex(results.error.message, /Failed to size original:*/);
+    t.is(results.error.message, "Image is empty");
   });
 });

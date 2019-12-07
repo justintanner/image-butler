@@ -55,7 +55,7 @@ class ProcessUpload {
               `Failed to fetch S3 Object. bucket: ${params.Bucket}, key: ${params.Key}, message: ${error.message}`
             )
           );
-        } else if (data.ContentLength <= 0) {
+        } else if (data.ContentLength <= 0 || data.Body.length <= 0) {
           reject(ProcessUpload.errorWithChain(chain, "Image is empty"));
         } else {
           resolve(
@@ -73,12 +73,9 @@ class ProcessUpload {
   static rotateAndCropOriginal(chain) {
     return new Promise((resolve, reject) => {
       let config = chain.pathDecoder.config;
-      if (!_.has(config, "rotateOriginal") && !_.has(config, "cropOriginal")) {
-        resolve(chain);
-        return;
-      }
 
-      let image = gm(chain.image);
+      /* .autoOrient tells gm to transpose the pixels of an exif rotated jpeg */
+      let image = gm(chain.image).autoOrient();
 
       if (_.has(config, "rotateOriginal")) {
         console.log("Rotating original image.");
@@ -161,6 +158,7 @@ class ProcessUpload {
     return new Promise((resolve, reject) => {
       if (_.has(chain.pathDecoder.config, "styles")) {
         gm(chain.image)
+          .autoOrient()
           .noProfile()
           .geometry(chain.pathDecoder.maxGeometry)
           .toBuffer("miff", function(error, miffImage) {
