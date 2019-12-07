@@ -74,7 +74,7 @@ class ProcessUpload {
     return new Promise((resolve, reject) => {
       let config = chain.pathDecoder.config;
 
-      /* .autoOrient tells gm to transpose the pixels of an exif rotated jpeg */
+      /* .autoOrient tells gm to transpose the pixels of exif rotated jpegs */
       let image = gm(chain.image).autoOrient();
 
       if (_.has(config, "rotateOriginal")) {
