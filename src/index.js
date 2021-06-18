@@ -7,11 +7,11 @@ exports.handler = (event, context, callback) => {
     const s3Path = event.Records[0].s3.object.key;
 
     ProcessUploadAndCallback.fromPath(s3Path, event.testingOnlyS3)
-      .then(results => {
+      .then((results) => {
         console.log(results.finalMessage);
         context.succeed(results.finalMessage);
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
         callback(error);
       });

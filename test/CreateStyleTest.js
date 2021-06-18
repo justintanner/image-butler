@@ -7,7 +7,7 @@ import CreateStyle from "../src/CreateStyle.js";
 import dotenv from "dotenv";
 dotenv.config({ path: TestHelpers.fixturePath(".env.lambda-tester") });
 
-test("successfully creates a style from a jpg", t => {
+test("successfully creates a style from a jpg", (t) => {
   let awsMocks = new AwsMocks();
   awsMocks.putObject(null, {});
 
@@ -18,14 +18,14 @@ test("successfully creates a style from a jpg", t => {
     maxGeometry: "1000x1000",
     destPath: "fake/s3/path/t.jpg",
     fileExtension: "jpeg",
-    s3: awsMocks.s3
-  }).then(result => {
+    s3: awsMocks.s3,
+  }).then((result) => {
     t.is(result.size.height, 75);
     t.is(result.size.width, 100);
   });
 });
 
-test("successfully creates a style from a png", t => {
+test("successfully creates a style from a png", (t) => {
   let awsMocks = new AwsMocks();
   awsMocks.putObject(null, {});
 
@@ -35,14 +35,14 @@ test("successfully creates a style from a png", t => {
     geometry: "200x200",
     destPath: "fake/s3/path/t.png",
     fileExtension: "png",
-    s3: awsMocks.s3
-  }).then(result => {
+    s3: awsMocks.s3,
+  }).then((result) => {
     t.is(result.size.height, 200);
     t.is(result.size.width, 150);
   });
 });
 
-test("successfully creates a style from a gif", t => {
+test("successfully creates a style from a gif", (t) => {
   let awsMocks = new AwsMocks();
   awsMocks.putObject(null, {});
 
@@ -52,14 +52,14 @@ test("successfully creates a style from a gif", t => {
     geometry: "300x300",
     destPath: "fake/s3/path/t.gif",
     fileExtension: "gif",
-    s3: awsMocks.s3
-  }).then(result => {
+    s3: awsMocks.s3,
+  }).then((result) => {
     t.is(result.size.height, 191);
     t.is(result.size.width, 300);
   });
 });
 
-test("fails when given invalid image data", t => {
+test("fails when given invalid image data", (t) => {
   let awsMocks = new AwsMocks();
   awsMocks.putObject(null, {});
 
@@ -69,8 +69,8 @@ test("fails when given invalid image data", t => {
     geometry: "300x300",
     destPath: "fake/s3/path/t.gif",
     fileExtension: "gif",
-    s3: awsMocks.s3
-  }).catch(error => {
+    s3: awsMocks.s3,
+  }).catch((error) => {
     t.is(
       error.message,
       "Failed to resize style thumb: Stream yields empty buffer"
@@ -78,7 +78,7 @@ test("fails when given invalid image data", t => {
   });
 });
 
-test("fails to save to s3", t => {
+test("fails to save to s3", (t) => {
   let awsMocks = new AwsMocks();
   awsMocks.putObject(new Error("Mocking an error"), {});
 
@@ -88,8 +88,8 @@ test("fails to save to s3", t => {
     geometry: "300x300",
     destPath: "fake/s3/path/t.gif",
     fileExtension: "gif",
-    s3: awsMocks.s3
-  }).catch(error => {
+    s3: awsMocks.s3,
+  }).catch((error) => {
     t.is(error.message, "Failed save style thumb: Mocking an error");
   });
 });

@@ -11,33 +11,33 @@ dotenv.config({ path: TestHelpers.fixturePath(".env.lambda-tester") });
 
 let encodedPayload, validKey;
 
-test.before(t => {
+test.before((t) => {
   encodedPayload = TestHelpers.signAndEncode({
     styles: {
       thumb: "100x100",
-      large: "500x700"
+      large: "500x700",
     },
     callbackData: { anything: "goes" },
-    callbackUrl: "http://lvh.me.org/null"
+    callbackUrl: "http://lvh.me.org/null",
   });
 
   validKey = `uploads/1/2/${encodedPayload}/t.jpg`;
 });
 
-test.serial("processes a valid jpg and calls back", t => {
+test.serial("processes a valid jpg and calls back", (t) => {
   let requestSpy = sinon.spy(request, "post");
   let awsMocks = new AwsMocks();
 
   awsMocks.getObject(null, {
     Body: TestHelpers.fixture("960x720.jpg"),
     ContentLength: 592,
-    ContentType: "image/jpeg"
+    ContentType: "image/jpeg",
   });
 
   awsMocks.putObject(null, {});
 
   return ProcessUploadAndCallback.fromPath(validKey, awsMocks.s3).catch(
-    results => {
+    (results) => {
       // This should not be catch, this should be a then!
       t.is(
         results.finalMessage,
@@ -56,10 +56,10 @@ test.serial("processes a valid jpg and calls back", t => {
           sizes: {
             original: { width: 960, height: 720 },
             thumb: { width: 100, height: 75 },
-            large: { width: 500, height: 375 }
+            large: { width: 500, height: 375 },
           },
-          anything: "goes"
-        }
+          anything: "goes",
+        },
       };
 
       const actualPostData = requestSpy.args[0][0];
@@ -69,14 +69,17 @@ test.serial("processes a valid jpg and calls back", t => {
   );
 });
 
-test.serial("calls back with an error when an image could not be found", t => {
-  /* This mock is leaking into the test about without .serial */
-  let awsMocks = new AwsMocks();
-  awsMocks.getObject(new Error("Faking a failed retrieval"), {});
+test.serial(
+  "calls back with an error when an image could not be found",
+  (t) => {
+    /* This mock is leaking into the test about without .serial */
+    let awsMocks = new AwsMocks();
+    awsMocks.getObject(new Error("Faking a failed retrieval"), {});
 
-  return ProcessUploadAndCallback.fromPath(validKey, awsMocks.s3).catch(
-    results => {
-      t.true(results.error.message.startsWith("Failed to fetch S3 Object."));
-    }
-  );
-});
+    return ProcessUploadAndCallback.fromPath(validKey, awsMocks.s3).catch(
+      (results) => {
+        t.true(results.error.message.startsWith("Failed to fetch S3 Object."));
+      }
+    );
+  }
+);

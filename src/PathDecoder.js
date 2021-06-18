@@ -44,7 +44,7 @@ class PathDecoder {
     let jsonString;
 
     try {
-      jsonString = new Buffer(this._base64Payload, "base64").toString();
+      jsonString = new Buffer.from(this._base64Payload, "base64").toString();
     } catch (err) {
       throw new Error("Failed to base64 element of S3 path");
     }
@@ -76,7 +76,7 @@ class PathDecoder {
     const config = this._config;
 
     if (_.has(config, "styles")) {
-      _.each(_.keys(config.styles), name => {
+      _.each(_.keys(config.styles), (name) => {
         let geometry = config.styles[name];
 
         if (!PathDecoder.validImageMagickGeometry(geometry)) {
@@ -119,7 +119,7 @@ class PathDecoder {
       let maxWidth = 0;
       let maxHeight = 0;
 
-      _.each(_.values(this._config.styles), geometry => {
+      _.each(_.values(this._config.styles), (geometry) => {
         const dimensions = geometry.split("x");
         const width = parseInt(dimensions[0]);
         const height = parseInt(dimensions[1]);

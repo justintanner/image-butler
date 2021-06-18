@@ -11,13 +11,13 @@ dotenv.config({ path: TestHelpers.fixturePath(".env.lambda-tester") });
 
 let encodedStyles, validPath;
 
-test.before(t => {
+test.before((t) => {
   encodedStyles = TestHelpers.signAndEncode({
     styles: {
       thumb: "100x100",
-      large: "500x700"
+      large: "500x700",
     },
-    callbackUrl: "http://lvh.me"
+    callbackUrl: "http://lvh.me",
   });
 
   validPath = `uploads/1/2/${encodedStyles}/t.jpg`;
@@ -26,18 +26,18 @@ test.before(t => {
   sinon.stub(request, "post").yields(null, {}, {});
 });
 
-test("processes a valid jpg", t => {
+test("processes a valid jpg", (t) => {
   let awsMocks = new AwsMocks();
 
   awsMocks.getObject(null, {
     Body: TestHelpers.fixture("960x720.jpg"),
     ContentLength: 999,
-    ContentType: "image/jpeg"
+    ContentType: "image/jpeg",
   });
 
   awsMocks.putObject(null, {});
 
-  return ProcessUpload.fromPath(validPath, awsMocks.s3).then(results => {
+  return ProcessUpload.fromPath(validPath, awsMocks.s3).then((results) => {
     t.is(
       results.finalMessage,
       "Successfully processed image. Created 2 styles."
@@ -48,17 +48,17 @@ test("processes a valid jpg", t => {
   });
 });
 
-test("processes a massive ~10MB jpg", t => {
+test("processes a massive ~10MB jpg", (t) => {
   let awsMocks = new AwsMocks();
 
   awsMocks.getObject(null, {
     Body: TestHelpers.fixture("5472x3648.jpg"),
-    ContentLength: 999
+    ContentLength: 999,
   });
 
   awsMocks.putObject(null, {});
 
-  return ProcessUpload.fromPath(validPath, awsMocks.s3).then(results => {
+  return ProcessUpload.fromPath(validPath, awsMocks.s3).then((results) => {
     t.is(
       results.finalMessage,
       "Successfully processed image. Created 2 styles."
@@ -66,25 +66,25 @@ test("processes a massive ~10MB jpg", t => {
   });
 });
 
-test("maintains a jpegs exif rotation as if the pixels were transposed", t => {
+test("maintains a jpegs exif rotation as if the pixels were transposed", (t) => {
   let awsMocks = new AwsMocks();
   awsMocks.putObject(null, {});
 
   awsMocks.getObject(null, {
     Body: TestHelpers.fixture("exif_rotated_480x640.jpg"),
-    ContentLength: 999
+    ContentLength: 999,
   });
 
   const rotationStyles = TestHelpers.signAndEncode({
     styles: {
-      thumb: "100x100"
+      thumb: "100x100",
     },
-    callbackUrl: "http://lvh.me"
+    callbackUrl: "http://lvh.me",
   });
 
   const rotationPath = `uploads/1/2/${rotationStyles}/t.jpg`;
 
-  return ProcessUpload.fromPath(rotationPath, awsMocks.s3).then(results => {
+  return ProcessUpload.fromPath(rotationPath, awsMocks.s3).then((results) => {
     t.is(results.sizes.original.width, 480);
     t.is(results.sizes.original.height, 640);
 
@@ -93,29 +93,29 @@ test("maintains a jpegs exif rotation as if the pixels were transposed", t => {
   });
 });
 
-test("pre rotates before processing an image", t => {
+test("pre rotates before processing an image", (t) => {
   let awsMocks = new AwsMocks();
 
   awsMocks.getObject(null, {
     Body: TestHelpers.fixture("960x720.jpg"),
-    ContentLength: 999
+    ContentLength: 999,
   });
 
   awsMocks.putObject(null, {});
 
   const rotationStyles = TestHelpers.signAndEncode({
     rotateOriginal: {
-      angle: 90
+      angle: 90,
     },
     styles: {
-      thumb: "100x100"
+      thumb: "100x100",
     },
-    callbackUrl: "http://lvh.me"
+    callbackUrl: "http://lvh.me",
   });
 
   const rotationPath = `uploads/1/2/${rotationStyles}/t.jpg`;
 
-  return ProcessUpload.fromPath(rotationPath, awsMocks.s3).then(results => {
+  return ProcessUpload.fromPath(rotationPath, awsMocks.s3).then((results) => {
     t.is(results.sizes.original.width, 720);
     t.is(results.sizes.original.height, 960);
 
@@ -124,12 +124,12 @@ test("pre rotates before processing an image", t => {
   });
 });
 
-test("pre crops before processing an image", t => {
+test("pre crops before processing an image", (t) => {
   let awsMocks = new AwsMocks();
 
   awsMocks.getObject(null, {
     Body: TestHelpers.fixture("960x720.jpg"),
-    ContentLength: 999
+    ContentLength: 999,
   });
 
   awsMocks.putObject(null, {});
@@ -139,17 +139,17 @@ test("pre crops before processing an image", t => {
       width: 200,
       height: 200,
       x: 10,
-      y: 10
+      y: 10,
     },
     styles: {
-      thumb: "100x100"
+      thumb: "100x100",
     },
-    callbackUrl: "http:/lvh.me"
+    callbackUrl: "http:/lvh.me",
   });
 
   const cropPath = `uploads/1/2/${cropStyles}/t.jpg`;
 
-  return ProcessUpload.fromPath(cropPath, awsMocks.s3).then(results => {
+  return ProcessUpload.fromPath(cropPath, awsMocks.s3).then((results) => {
     t.is(results.sizes.original.width, 200);
     t.is(results.sizes.original.height, 200);
 
@@ -158,35 +158,35 @@ test("pre crops before processing an image", t => {
   });
 });
 
-test("fails when s3 returns an error", t => {
+test("fails when s3 returns an error", (t) => {
   let awsMocks = new AwsMocks();
 
   awsMocks.getObject(new Error("mockS3Error"), {});
 
-  return ProcessUpload.fromPath(validPath, awsMocks.s3).catch(results => {
+  return ProcessUpload.fromPath(validPath, awsMocks.s3).catch((results) => {
     t.regex(results.error.message, /Failed to fetch S3 Object*/);
   });
 });
 
-test("fails with an invalid s3 image", t => {
+test("fails with an invalid s3 image", (t) => {
   let awsMocks = new AwsMocks();
 
   awsMocks.getObject(null, { ContentLength: 0 });
 
-  return ProcessUpload.fromPath(validPath, awsMocks.s3).catch(results => {
+  return ProcessUpload.fromPath(validPath, awsMocks.s3).catch((results) => {
     t.is(results.error.message, "Image is empty");
   });
 });
 
-test("fails to identify empty image", async t => {
+test("fails to identify empty image", async (t) => {
   let awsMocks = new AwsMocks();
 
   awsMocks.getObject(null, {
     Body: TestHelpers.fixture("empty-file.jpg"),
-    ContentLength: 999
+    ContentLength: 999,
   });
 
-  return ProcessUpload.fromPath(validPath, awsMocks.s3).catch(results => {
+  return ProcessUpload.fromPath(validPath, awsMocks.s3).catch((results) => {
     t.is(results.error.message, "Image is empty");
   });
 });

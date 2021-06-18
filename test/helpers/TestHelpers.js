@@ -35,7 +35,7 @@ function fixturePath(filename) {
 function lambdaRecord(path, s3Spy) {
   return {
     Records: [{ s3: { object: { key: path } } }],
-    testingOnlyS3: s3Spy
+    testingOnlyS3: s3Spy,
   };
 }
 

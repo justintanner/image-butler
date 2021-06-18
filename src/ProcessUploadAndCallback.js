@@ -20,10 +20,10 @@ class ProcessUploadAndCallback {
   static process(chain) {
     return new Promise((resolve, reject) => {
       ProcessUpload.fromPath(chain.s3Path, chain.s3)
-        .then(results => {
+        .then((results) => {
           resolve(results);
         })
-        .catch(results => {
+        .catch((results) => {
           resolve(results);
         });
     });
@@ -37,10 +37,10 @@ class ProcessUploadAndCallback {
         _.extend(json, {
           uniqueId: chain.pathDecoder.uniqueId,
           finishedPathPrefix: chain.pathDecoder.finishedPathPrefix(),
-          fileName: chain.pathDecoder.fileName
+          fileName: chain.pathDecoder.fileName,
         });
 
-        _.each(_.keys(chain.pathDecoder.config.callbackData), key => {
+        _.each(_.keys(chain.pathDecoder.config.callbackData), (key) => {
           json[key] = chain.pathDecoder.config.callbackData[key];
         });
       } else {
@@ -62,13 +62,13 @@ class ProcessUploadAndCallback {
 
       if (_.has(chain, "error")) {
         _.extend(json, {
-          errorMessage: chain.error.message
+          errorMessage: chain.error.message,
         });
       }
 
       const postData = {
         url: chain.pathDecoder.config.callbackUrl,
-        json: json
+        json: json,
       };
 
       request.post(postData, (error, response, body) => {

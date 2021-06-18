@@ -1,8 +1,5 @@
 import _ from "underscore";
-
-import GmLoader from "./GmLoader";
-const gm = GmLoader(module);
-
+import gm from "gm";
 import PathDecoder from "./PathDecoder";
 import CreateStyle from "./CreateStyle";
 
@@ -44,7 +41,7 @@ class ProcessUpload {
     return new Promise((resolve, reject) => {
       const params = {
         Bucket: process.env.IB_BUCKET,
-        Key: chain.pathDecoder.path
+        Key: chain.pathDecoder.path,
       };
 
       chain.s3.getObject(params, (error, data) => {
@@ -62,7 +59,7 @@ class ProcessUpload {
             _.extend(chain, {
               image: data.Body,
               fileSize: data.ContentLength,
-              contentType: data.ContentType
+              contentType: data.ContentType,
             })
           );
         }
@@ -135,7 +132,7 @@ class ProcessUpload {
       const params = {
         Bucket: process.env.IB_BUCKET,
         Key: chain.pathDecoder.finishedPathForStyle("original"),
-        Body: chain.image
+        Body: chain.image,
       };
 
       chain.s3.putObject(params, (awsError, data) => {
@@ -161,7 +158,7 @@ class ProcessUpload {
           .autoOrient()
           .noProfile()
           .geometry(chain.pathDecoder.maxGeometry)
-          .toBuffer("miff", function(error, miffImage) {
+          .toBuffer("miff", function (error, miffImage) {
             if (error) {
               reject(new Error(`Failed to create miff: ${error.message}`));
             } else {
@@ -180,7 +177,7 @@ class ProcessUpload {
       if (_.has(chain.pathDecoder.config, "styles")) {
         const styles = chain.pathDecoder.config.styles;
 
-        const stylePromises = _.keys(styles).map(style => {
+        const stylePromises = _.keys(styles).map((style) => {
           const geometry = styles[style];
           return CreateStyle.from({
             image: chain.image,
@@ -188,20 +185,20 @@ class ProcessUpload {
             geometry: geometry,
             destPath: chain.pathDecoder.finishedPathForStyle(style),
             fileExtension: chain.pathDecoder.fileExtension,
-            s3: chain.s3
+            s3: chain.s3,
           });
         });
 
         Promise.all(stylePromises)
-          .then(results => {
-            _.each(results, result => {
+          .then((results) => {
+            _.each(results, (result) => {
               chain.sizes[result.style] = result.size;
             });
 
             chain.styleCount = stylePromises.length;
             resolve(chain);
           })
-          .catch(error => {
+          .catch((error) => {
             reject(ProcessUpload.errorWithChain(chain, error));
           });
       } else {

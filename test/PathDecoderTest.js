@@ -4,17 +4,17 @@ import PathDecoder from "../src/PathDecoder.js";
 
 let encodedStyles;
 
-test.before(t => {
+test.before((t) => {
   encodedStyles = TestHelpers.signAndEncode({
     styles: {
       thumb: "150x150",
-      large: "100x700"
+      large: "100x700",
     },
-    callbackUrl: "http://lvh.me"
+    callbackUrl: "http://lvh.me",
   });
 });
 
-test("splits an input path into pieces", t => {
+test("splits an input path into pieces", (t) => {
   const path = `uploads/1499360605984/999/${encodedStyles}/t.jpeg`;
   const pathDecoder = new PathDecoder(path);
 
@@ -24,7 +24,7 @@ test("splits an input path into pieces", t => {
   t.is(pathDecoder.fileExtension, "jpeg");
 });
 
-test("creates a valid destination path", t => {
+test("creates a valid destination path", (t) => {
   const path = `uploads/1499360605984/999/${encodedStyles}/t.jpeg`;
   const pathDecoder = new PathDecoder(path);
 
@@ -32,13 +32,13 @@ test("creates a valid destination path", t => {
   t.is(pathDecoder.finishedPathForStyle("original"), expectedPath);
 });
 
-test("accepts a valid rotation angle", t => {
+test("accepts a valid rotation angle", (t) => {
   const rotateConfig = TestHelpers.signAndEncode({
     rotateOriginal: {
       backgroundColor: "blue",
-      angle: 90
+      angle: 90,
     },
-    callbackUrl: "http://lvh.me"
+    callbackUrl: "http://lvh.me",
   });
 
   const path = `uploads/1/2/${rotateConfig}/t.jpeg`;
@@ -48,15 +48,15 @@ test("accepts a valid rotation angle", t => {
   t.is(pathDecoder.config.rotateOriginal.backgroundColor, "blue");
 });
 
-test("accepts a valid crop config", t => {
+test("accepts a valid crop config", (t) => {
   const cropConfig = TestHelpers.signAndEncode({
     cropOriginal: {
       width: 201,
       height: 6,
       x: 10,
-      y: 12
+      y: 12,
     },
-    callbackUrl: "http://lvh.me"
+    callbackUrl: "http://lvh.me",
   });
 
   const path = `uploads/1/2/${cropConfig}/t.jpeg`;
@@ -68,7 +68,7 @@ test("accepts a valid crop config", t => {
   t.is(pathDecoder.config.cropOriginal.y, 12);
 });
 
-test("decodes url escaped characters", t => {
+test("decodes url escaped characters", (t) => {
   const path = `uploads/%41/%42/${encodedStyles}/t.jpeg`;
   const pathDecoder = new PathDecoder(path);
 
@@ -76,21 +76,21 @@ test("decodes url escaped characters", t => {
   t.is(pathDecoder.uniqueId, "B");
 });
 
-test("decodes base64 encoded JSON", t => {
+test("decodes base64 encoded JSON", (t) => {
   const path = `uploads/1/2/${encodedStyles}/t.jpeg`;
   const pathDecoder = new PathDecoder(path);
 
   t.is(pathDecoder.config.styles.thumb, "150x150");
 });
 
-test("calculates the max height and width", t => {
+test("calculates the max height and width", (t) => {
   const path = `uploads/1/2/${encodedStyles}/t.jpeg`;
   const pathDecoder = new PathDecoder(path);
 
   t.is(pathDecoder.maxGeometry, "150x700");
 });
 
-test("throw an exception for an invalid path", async t => {
+test("throw an exception for an invalid path", async (t) => {
   const error = await t.throws(() => {
     const pathDecoder = new PathDecoder("invalid_path");
   });
@@ -98,11 +98,11 @@ test("throw an exception for an invalid path", async t => {
   t.is(error.message, "Invalid S3 path");
 });
 
-test("throws an exception for an invalid size", async t => {
+test("throws an exception for an invalid size", async (t) => {
   const badSize = TestHelpers.signAndEncode({
     styles: {
-      thumb: "invalid"
-    }
+      thumb: "invalid",
+    },
   });
 
   const path = `uploads/1499360605984/999/${badSize}/t.jpeg`;
@@ -114,14 +114,14 @@ test("throws an exception for an invalid size", async t => {
   t.is(error.message, "Invalid geometry in config: (thumb: invalid)");
 });
 
-test("throws an exception for an invalid signature", async t => {
+test("throws an exception for an invalid signature", async (t) => {
   const badSignature = TestHelpers.signAndEncode(
     {
       styles: {
         thumb: "150x150",
-        large: "100x700"
+        large: "100x700",
       },
-      callbackUrl: "http://lvh.me"
+      callbackUrl: "http://lvh.me",
     },
     "BAD SIGNATURE!"
   );

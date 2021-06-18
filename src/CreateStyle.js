@@ -1,5 +1,4 @@
-import GmLoader from "./GmLoader";
-const gm = GmLoader(module);
+import gm from "gm";
 
 class CreateStyle {
   /**
@@ -43,7 +42,7 @@ class CreateStyle {
 
   static size(chain) {
     return new Promise((resolve, reject) => {
-      gm(chain.resizedImage).size(function(err, size) {
+      gm(chain.resizedImage).size(function (err, size) {
         if (err) {
           reject(
             new Error(`Failed get size info for ${chain.style}: ${err.message}`)
@@ -60,7 +59,7 @@ class CreateStyle {
       const params = {
         Bucket: process.env.IB_BUCKET,
         Key: chain.destPath,
-        Body: chain.resizedImage
+        Body: chain.resizedImage,
       };
 
       chain.s3.putObject(params, (err, data) => {
