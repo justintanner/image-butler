@@ -28,7 +28,7 @@
   },
   "betterScripts": {
     "create:lambda": {
-      "command": "claudia create --profile default --region $IB_REGION --handler build/index.handler --no-optional-dependencies --timeout $IB_TIMEOUT --memory $IB_MEMORY --use-s3-bucket $IB_DEPLOY_BUCKET --layers arn:aws:lambda:$IB_REGION:175033217214:layer:graphicsmagick:2 --set-env IB_BUCKET=$IB_BUCKET,IB_SECRET=$IB_SECRET"
+      "command": "claudia create --profile default --region $IB_REGION --handler build/index.handler --no-optional-dependencies --timeout $IB_TIMEOUT --memory $IB_MEMORY --use-s3-bucket $IB_BUCKET --layers arn:aws:lambda:$IB_REGION:175033217214:layer:graphicsmagick:2 --set-env IB_BUCKET=$IB_BUCKET,IB_SECRET=$IB_SECRET"
     },
     "update:lambda": {
       "command": "claudia update --profile default --no-optional-dependencies --handler build/index.handler --layers arn:aws:lambda:$IB_REGION:175033217214:layer:graphicsmagick:2 --use-s3-bucket $IB_DEPLOY_BUCKET "
